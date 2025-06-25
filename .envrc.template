@@ -1,0 +1,27 @@
+# .envrc.template - Copy this to .envrc and customize
+# This file is loaded automatically by direnv.
+
+# Activate the Nix development environment
+use flake
+
+# --- Project Configuration ---
+# A unique name for this project to prevent container name clashes
+export COMPOSE_PROJECT_NAME=my_cool_site
+
+# --- Port Mapping ---
+# Map ports to avoid conflicts when running multiple projects
+export WP_PORT=8081
+export PMA_PORT=8082
+export MAILHOG_WEB_PORT=8025
+export MAILHOG_SMTP_PORT=1025
+
+# --- Database Credentials ---
+# These are used by WordPress and phpMyAdmin
+export DB_NAME=wordpress
+export DB_USER=wp_user
+export DB_PASSWORD=wp_password
+export DB_ROOT_PASSWORD=root_password_very_secret
+
+# --- Premium Plugin Keys ---
+# Add your ACF Pro license key here to enable installation via `make setup`
+# export ACF_PRO_KEY="your-key-goes-here"

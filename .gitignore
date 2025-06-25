@@ -1,0 +1,33 @@
+# Nix and Direnv artifacts
+/result*
+/.direnv/
+.envrc
+
+# WordPress core, plugins, and uploads
+# The 'src' directory will be populated by the container on first run
+# or by the user. We don't want to commit the default WP files.
+/src/wp-admin/
+/src/wp-includes/
+/src/index.php
+/src/license.txt
+/src/readme.html
+/src/wp-activate.php
+/src/wp-blog-header.php
+/src/wp-comments-post.php
+/src/wp-config-sample.php
+/src/wp-cron.php
+/src/wp-links-opml.php
+/src/wp-load.php
+/src/wp-login.php
+/src/wp-mail.php
+/src/wp-settings.php
+/src/wp-signup.php
+/src/wp-trackback.php
+/src/xmlrpc.php
+
+# Ignore user-uploaded content
+/src/wp-content/uploads/
+
+# Ignore bulky vendor folders
+/node_modules/
+/vendor/

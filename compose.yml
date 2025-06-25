@@ -1,0 +1,78 @@
+# compose.yml
+version: "3.8"
+
+services:
+  db:
+    image: mariadb:latest
+    container_name: ${COMPOSE_PROJECT_NAME}-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - nixpress-net
+
+  redis:
+    image: redis:latest
+    container_name: ${COMPOSE_PROJECT_NAME}-redis
+    restart: unless-stopped
+    networks:
+      - nixpress-net
+
+  wordpress:
+    build: ./image_build/wordpress # Tells compose to buid the Dockerfile in this directory
+    # image: wordpress:latest
+    container_name: ${COMPOSE_PROJECT_NAME}-wordpress
+    restart: unless-stopped
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "${WP_PORT}:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: ${DB_USER}
+      WORDPRESS_DB_PASSWORD: ${DB_PASSWORD}
+      WORDPRESS_DB_NAME: ${DB_NAME}
+      WORDPRESS_TABLE_PREFIX: wp_
+      # For connecting WordPress to Redis
+      WORDPRESS_REDIS_HOST: redis
+    volumes:
+      # This mounts your local ./src directory into the container
+      - ./src:/var/www/html
+    networks:
+      - nixpress-net
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: ${COMPOSE_PROJECT_NAME}-phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - "${PMA_PORT}:80"
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    networks:
+      - nixpress-net
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: ${COMPOSE_PROJECT_NAME}-mailhog
+    restart: unless-stopped
+    ports:
+      - "${MAILHOG_SMTP_PORT}:1025" # SMTP port
+      - "${MAILHOG_WEB_PORT}:8025"  # Web UI port
+    networks:
+      - nixpress-net
+
+volumes:
+  db_data:
+
+networks:
+  nixpress-net:
